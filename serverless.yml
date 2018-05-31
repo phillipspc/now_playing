@@ -14,6 +14,10 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:us-east-1:*:*"
+    - Effect: Allow
+      Action:
+        - "sns:*"
+      Resource: "arn:aws:sns:us-east-1:*:*"
 
 functions:
   nowPlaying:
@@ -23,6 +27,10 @@ functions:
           path: nowplaying
           method: post
           cors: true
+  dispatcher:
+    handler: handler.dispatcher
+    events:
+      - sns: dispatch
   callback:
     handler: handler.callback
     events:
