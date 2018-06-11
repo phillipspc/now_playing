@@ -91,7 +91,8 @@ module.exports = {
               });
             } else {
               slack.webhook({
-                text: "It doesnt look like you're currently listening to anything."
+                response_type: "in_channel",
+                text: "It doesn't look like you're currently listening to anything."
               }, function(err, response) {
                 if (err) {
                   console.log("Error posting to webhook", err);

@@ -25,7 +25,7 @@ module.exports.nowPlaying = (event, context, callback) => {
     headers: {
       "Content-type": "application/json"
     },
-    // bit of a hack here, ensures the original command invocation shows up in slack
+    // bit of a hack here, ensures the command invocation shows up in slack
     body: JSON.stringify({
       response_type: "in_channel",
       text: ""
