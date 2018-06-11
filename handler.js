@@ -1,12 +1,15 @@
 'use strict';
+const queryString = require('query-string');
 const service = require('./service');
 const AWS = require('aws-sdk');
 const sns = new AWS.SNS();
 const authorizer = require('./authorizer');
 
+
 module.exports.nowPlaying = (event, context, callback) => {
-  const id = event.queryStringParameters.user_id + "-" + event.queryStringParameters.team_id;
-  const responseUrl = event.queryStringParameters.response_url;
+  const parsed = queryString.parse(event.body);
+  const id = parsed.user_id + "-" + parsed.team_id;
+  const responseUrl = parsed.response_url;
 
   sns.publish({
     Message: JSON.stringify({id: id, responseUrl: responseUrl}),
