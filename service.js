@@ -19,7 +19,7 @@ module.exports = {
         console.log("Error creating user", error);
       }
 
-      let response = {
+      const response = {
         statusCode: 200,
         body: JSON.stringify({ message: "Authorization successful. You are now ready to use the /nowplaying command!" })
       }
@@ -38,14 +38,14 @@ module.exports = {
   },
 
   sendAuthUrl: function (id, responseUrl) {
-    let scopes = ['user-read-playback-state'];
-    let state = id;
-    let url = spotifyApi.createAuthorizeURL(scopes, state);
+    const scopes = ['user-read-playback-state'];
+    const state = id;
+    const url = spotifyApi.createAuthorizeURL(scopes, state);
 
     slack.setWebhook(responseUrl);
 
     slack.webhook({
-      text: url
+      text: "Use this link to authorize your account: " + url
     }, function(err, response) {
       if (err) {
         console.log("Error posting Auth URL via webhook", err);
@@ -54,7 +54,7 @@ module.exports = {
   },
 
   createUserWithTokens: function (code, params, callback) {
-    let service = this;
+    const service = this;
 
     spotifyApi.authorizationCodeGrant(code).then(
       function (data) {
@@ -68,7 +68,7 @@ module.exports = {
   },
 
   showNowPlaying: function (user, responseUrl) {
-    let refreshToken = user.refresh_token;
+    const refreshToken = user.refresh_token;
     slack.setWebhook(responseUrl);
 
     spotifyApi.setRefreshToken(refreshToken);
@@ -78,7 +78,7 @@ module.exports = {
         spotifyApi.getMyCurrentPlaybackState({}).then(
           function (data) {
             if (Object.keys(data.body).length !== 0) {
-              let spotifyUrl = data.body.item.external_urls.spotify;
+              const spotifyUrl = data.body.item.external_urls.spotify;
 
               slack.webhook({
                 text: spotifyUrl,

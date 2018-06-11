@@ -1,13 +1,12 @@
 'use strict';
-const queryString = require('query-string');
 const service = require('./service');
 const AWS = require('aws-sdk');
 const sns = new AWS.SNS();
+const authorizer = require('./authorizer');
 
 module.exports.nowPlaying = (event, context, callback) => {
-  let parsed = queryString.parse(event.body);
-  let id = parsed.user_id + "-" + parsed.team_id;
-  let responseUrl = parsed.response_url;
+  const id = event.queryStringParameters.user_id + "-" + event.queryStringParameters.team_id;
+  const responseUrl = event.queryStringParameters.response_url;
 
   sns.publish({
     Message: JSON.stringify({id: id, responseUrl: responseUrl}),
@@ -21,11 +20,11 @@ module.exports.nowPlaying = (event, context, callback) => {
 };
 
 module.exports.dispatcher = (event, context, callback) => {
-  let parsed = JSON.parse(event.Records[0].Sns.Message);
-  let id = parsed.id;
-  let responseUrl = parsed.responseUrl;
+  const parsed = JSON.parse(event.Records[0].Sns.Message);
+  const id = parsed.id;
+  const responseUrl = parsed.responseUrl;
 
-  let queryParams = {
+  const queryParams = {
     TableName: "users",
     KeyConditionExpression: "#id = :id",
     ExpressionAttributeNames:{
@@ -40,12 +39,11 @@ module.exports.dispatcher = (event, context, callback) => {
 };
 
 module.exports.callback = (event, context, callback) => {
-  const params = event.queryStringParameters;
-  const id = params["state"];
-  const code = params["code"]
+  const id = event.queryStringParameters.state;
+  const code = event.queryStringParameters.code;
   const timestamp = new Date().getTime();
 
-  let putParams = {
+  const putParams = {
     TableName: 'users',
     Item: {
       id: id,
@@ -55,4 +53,10 @@ module.exports.callback = (event, context, callback) => {
   }
 
   service.createUserWithTokens(code, putParams, callback);
+};
+
+module.exports.authorization = (event, context, callback) => {
+  const code = event.queryStringParameters.code;
+
+  authorizer(code, callback);
 }

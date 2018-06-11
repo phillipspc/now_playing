@@ -38,6 +38,12 @@ functions:
           path: callback
           method: get
           cors: true
+  authorization:
+    handler: handler.authorization
+    events:
+      - http:
+          path: authorization
+          method: get
 
 resources:
   Resources:
