@@ -19,7 +19,19 @@ module.exports.nowPlaying = (event, context, callback) => {
       console.log(err);
     }
   });
-  callback(null, { statusCode: 200 });
+
+  const response = {
+    statusCode: 200,
+    headers: {
+      "Content-type": "application/json"
+    },
+    // bit of a hack here, ensures the original command invocation shows up in slack
+    body: JSON.stringify({
+      response_type: "in_channel",
+      text: ""
+    })
+  }
+  callback(null, response);
 };
 
 module.exports.dispatcher = (event, context, callback) => {
