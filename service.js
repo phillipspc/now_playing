@@ -78,6 +78,17 @@ module.exports = {
         spotifyApi.getMyCurrentPlaybackState({}).then(
           function (data) {
             if (Object.keys(data.body).length !== 0) {
+              if (data.body.item === null && data.body.device.is_private_session) {
+                return slack.webhook({
+                  response_type: "in_channel",
+                  text: "It looks like you're currently in a private session. You'll need to go public to share what you're listening to."
+                }, function(err, response) {
+                  if (err) {
+                    console.log("Error posting to webhook", err);
+                  }
+                });
+              }
+
               const spotifyUrl = data.body.item.external_urls.spotify;
 
               slack.webhook({
