@@ -2,7 +2,7 @@ service: now-playing
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs18.x
   iamRoleStatements:
     - Effect: Allow
       Action:
